@@ -11,7 +11,7 @@ crate-type = ["lib"]
 
 [dependencies]
 rust-gmp = "0.5.0"
-rand = "0.5"
+rand = "0.6"
 serde = "1.0"
 serde_derive = "1.0"
 
@@ -24,21 +24,21 @@ git = "https://github.com/KZen-networks/zk-paillier"
 tag = "v0.2.4"
 
 [dependencies.multi-party-schnorr]
-git = "https://github.com/KZen-networks/multi-party-schnorr"
-tag = "v0.3.1"
+git = "https://github.com/commerceblock/multi-party-schnorr"
+tag = "v0.3.4"
 
 [dependencies.curv]
-git = "https://github.com/KZen-networks/curv"
+git = "https://github.com/commerceblock/curv"
 features =  ["ec_secp256k1"]
-tag = "v0.2.2"
+tag = "v0.2.7"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
-tag = "v0.2.6"
+tag = "v0.2.7"
 
 [dependencies.centipede]
-git = "https://github.com/KZen-networks/centipede"
-tag = "v0.2.1"
+git = "https://github.com/commerceblock/centipede"
+tag = "v0.2.7"
 
 [patch.crates-io]
 rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
