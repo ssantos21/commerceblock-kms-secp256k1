@@ -15,6 +15,7 @@
     @license GPL-3.0+ <https://github.com/KZen-networks/kms/blob/master/LICENSE>
 */
 use super::hd_key;
+#[cfg(feature = "multi-party-schnorr")]
 use super::{MasterKey1, MasterKey2};
 use chain_code::two_party::party1::ChainCode1;
 use chain_code::two_party::party2::ChainCode2;
@@ -22,6 +23,7 @@ use curv::arithmetic::traits::Converter;
 use curv::elliptic::curves::traits::ECPoint;
 use curv::elliptic::curves::traits::ECScalar;
 use curv::{BigInt, FE, GE};
+#[cfg(feature = "multi-party-schnorr")]
 use multi_party_schnorr::protocols::multisig::*;
 use rotation::two_party::Rotation;
 use schnorr::two_party::party1::{
@@ -31,6 +33,7 @@ use ManagementSystem2PSchnorr;
 
 use Errors::{self, KeyGenError, SignError};
 
+#[cfg(feature = "multi-party-schnorr")]
 pub struct SignEph {
     pub first_message: SignParty2Message1,
     eph_key: EphKey,
@@ -49,6 +52,7 @@ pub struct SignHelper {
     pub Xt: GE,
 }
 
+#[cfg(feature = "multi-party-schnorr")]
 pub struct KeyGen {
     pub local_keys: Keys,
     pub first_message: KeyGenParty2Message1,
@@ -65,6 +69,7 @@ pub struct KeyGenParty2Message2 {
 pub struct HashE {
     pub e: FE,
 }
+#[cfg(feature = "multi-party-schnorr")]
 impl MasterKey2 {
     pub fn set_master_key(
         chain_code: &ChainCode2,
@@ -114,6 +119,7 @@ impl MasterKey2 {
         }
     }
 
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn sign_first_message() -> SignEph {
         let party2_com = EphKey::gen_commit();
         SignEph {
@@ -124,6 +130,7 @@ impl MasterKey2 {
         }
     }
 
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn sign_second_message(
         &self,
         eph_sign: &SignEph,
@@ -145,6 +152,7 @@ impl MasterKey2 {
         (SignHelper { es, Xt }, SignParty2Message2 { y2 })
     }
 
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn signature(
         &self,
         party_two_sign_second_message: &SignParty2Message2,
@@ -192,6 +200,7 @@ impl ManagementSystem2PSchnorr for MasterKey2 {
     }
 }
 
+#[cfg(feature = "multi-party-schnorr")]
 impl KeyGen {
     pub fn first_message() -> KeyGen {
         let keys_2 = Keys::create();
@@ -203,6 +212,7 @@ impl KeyGen {
     }
 
     // for predefined private key:
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn first_message_predefined(secret_share: FE) -> KeyGen {
         let keys_2 = Keys::create_from(secret_share);
         let broadcast1 = Keys::broadcast(keys_2.clone());
@@ -213,6 +223,7 @@ impl KeyGen {
     }
 
     // create local sig
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn second_message(
         &self,
         received_message1: &KeyGenParty1Message1,
@@ -226,6 +237,7 @@ impl KeyGen {
         (HashE { e }, KeyGenParty2Message2 { y2 })
     }
     // verify remote local sig and output joint public key if valid
+    #[cfg(feature = "multi-party-schnorr")]
     pub fn third_message(
         &self,
         received_message1: &KeyGenParty1Message1,

@@ -15,6 +15,7 @@
     @license GPL-3.0+ <https://github.com/KZen-networks/kms/blob/master/LICENSE>
 */
 use super::hd_key;
+#[cfg(feature = "multi-party-schnorr")]
 use super::{MasterKey1, MasterKey2};
 use chain_code::two_party::party1::ChainCode1;
 use chain_code::two_party::party2::ChainCode2;
@@ -22,6 +23,7 @@ use curv::arithmetic::traits::Converter;
 use curv::elliptic::curves::traits::ECPoint;
 use curv::elliptic::curves::traits::ECScalar;
 use curv::{BigInt, FE, GE};
+#[cfg(feature = "multi-party-schnorr")]
 use multi_party_schnorr::protocols::multisig::*;
 use rotation::two_party::Rotation;
 use schnorr::two_party::party2::{
@@ -32,6 +34,7 @@ use ManagementSystem2PSchnorr;
 
 use Errors::{self, KeyGenError, SignError};
 
+#[cfg(feature = "multi-party-schnorr")]
 pub struct SignEph {
     pub first_message: SignParty1Message1,
     eph_key: EphKey,
@@ -50,6 +53,7 @@ pub struct SignHelper {
     pub Xt: GE,
 }
 
+#[cfg(feature = "multi-party-schnorr")]
 pub struct KeyGen {
     pub local_keys: Keys,
     pub first_message: KeyGenParty1Message1,
@@ -66,7 +70,7 @@ pub struct KeyGenParty1Message2 {
 pub struct HashE {
     pub e: FE,
 }
-
+#[cfg(feature = "multi-party-schnorr")]
 impl MasterKey1 {
     pub fn set_master_key(
         chain_code: &ChainCode1,
@@ -194,7 +198,7 @@ impl ManagementSystem2PSchnorr for MasterKey1 {
         }
     }
 }
-
+#[cfg(feature = "multi-party-schnorr")]
 impl KeyGen {
     pub fn first_message() -> KeyGen {
         let keys_1 = Keys::create();
