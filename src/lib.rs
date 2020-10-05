@@ -20,6 +20,7 @@ extern crate serde;
 extern crate centipede;
 extern crate curv;
 extern crate multi_party_ecdsa;
+#[cfg(feature = "schnorr")]
 extern crate multi_party_schnorr;
 extern crate paillier;
 extern crate zk_paillier;
@@ -27,6 +28,7 @@ extern crate zk_paillier;
 pub mod chain_code;
 pub mod ecdsa;
 pub mod rotation;
+#[cfg(feature = "schnorr")]
 pub mod schnorr;
 pub mod traits;
 pub use traits::*;

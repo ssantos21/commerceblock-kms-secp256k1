@@ -18,15 +18,12 @@
 
 #[cfg(test)]
 mod tests {
-    use centipede::juggling::proof_system::Proof;
-    use centipede::juggling::segmentation::Msegmentation;
-    use curv::elliptic::curves::traits::{ECPoint, ECScalar};
-    use curv::{FE, GE};
-    use ecdsa::two_party::MasterKey1 as EcdsaMasterKey1;
-    use ecdsa::two_party::MasterKey2 as EcdsaMasterKey2;
+    #[cfg(feature = "schnorr")]
     use schnorr::two_party::party1;
+    #[cfg(feature = "schnorr")]
     use schnorr::two_party::party2;
 
+    #[cfg(feature = "schnorr")]
     #[test]
     fn poc_schnorr_ecdsa() {
         // generate random secret share:
