@@ -20,6 +20,7 @@ mod tests {
     use chain_code::two_party::party2;
     use curv::arithmetic::traits::Converter;
     use curv::elliptic::curves::traits::{ECPoint, ECScalar};
+    use curv::arithmetic::big_num::{One, Num};
     use curv::{BigInt, FE, GE};
     use rotation::two_party::party1::Rotation1;
     use rotation::two_party::party2::Rotation2;

@@ -14,6 +14,7 @@ use curv::arithmetic::traits::Converter;
 use curv::cryptographic_primitives::hashing::hmac_sha512;
 use curv::cryptographic_primitives::hashing::traits::KeyedHash;
 use curv::elliptic::curves::traits::{ECPoint, ECScalar};
+use curv::arithmetic::big_num::{One, Pow};
 use curv::{BigInt, FE, GE};
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
 use paillier::*;
@@ -60,7 +61,7 @@ pub fn hd_key(
     pubkey: &GE,
     chain_code_bi: &BigInt,
 ) -> (GE, FE, GE) {
-    let mask = BigInt::from(2).pow(256) - BigInt::one();
+    let mask = BigInt::from(2).pow(256 as u32) - BigInt::one();
     // let public_key = self.public.q.clone();
 
     // calc first element:

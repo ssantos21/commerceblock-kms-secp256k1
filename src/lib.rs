@@ -39,3 +39,5 @@ pub enum Errors {
     KeyGenError,
     SignError,
 }
+
+const ZK_PAILLIER_SALT_STRING: &[u8] = &[75, 90, 101, 110];
