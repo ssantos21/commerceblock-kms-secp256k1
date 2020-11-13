@@ -24,6 +24,7 @@ use super::{MasterKey1, MasterKey2, Party2Public};
 use curv::elliptic::curves::traits::ECPoint;
 use curv::elliptic::curves::traits::ECScalar;
 use rotation::two_party::Rotation;
+use cfg_if::cfg_if;
 use crate::ZK_PAILLIER_SALT_STRING;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -183,10 +184,26 @@ impl MasterKey2 {
             encrypted_secret_share: paillier_encrypted_share.clone(),
         };
 
-        let range_proof_verify = party_two::PaillierPublic::verify_range_proof(
-            &party_two_paillier,
-            &party_one_second_message.range_proof,
-        );
+        // Verify Paillier proofs
+        cfg_if! {
+            if #[cfg(feature="include_paillier_proofs")]{
+                let range_proof_verify = party_two::PaillierPublic::verify_range_proof(
+                    &party_two_paillier,
+                    &party_one_second_message.range_proof,
+                );
+                if range_proof_verify.is_err() {
+                    return Err(());
+                }
+
+                let correct_key_verify = party_one_second_message
+                    .correct_key_proof
+                    .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
+                if correct_key_verify.is_err() {
+                    return Err(());
+                }
+            }
+        }
+
 
         let (pdl_first_message, pdl_chal) = party_two_paillier.pdl_challenge(
             &party_one_second_message
@@ -195,26 +212,16 @@ impl MasterKey2 {
                 .public_share,
         );
 
-        let correct_key_verify = party_one_second_message
-            .correct_key_proof
-            .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
-
-        match range_proof_verify {
-            Ok(_proof) => match correct_key_verify {
-                Ok(_proof) => match party_two_second_message {
-                    Ok(t) => Ok((
-                        Party2SecondMessage {
-                            key_gen_second_message: t,
-                            pdl_first_message,
-                        },
-                        party_two_paillier,
-                        pdl_chal,
-                    )),
-                    Err(_verify_com_and_dlog_party_one) => Err(()),
+        match party_two_second_message {
+            Ok(t) => Ok((
+                Party2SecondMessage {
+                    key_gen_second_message: t,
+                    pdl_first_message,
                 },
-                Err(_correct_key_error) => Err(()),
-            },
-            Err(_range_proof_error) => Err(()),
+                party_two_paillier,
+                pdl_chal,
+            )),
+            Err(_verify_com_and_dlog_party_one) => Err(()),
         }
     }
 

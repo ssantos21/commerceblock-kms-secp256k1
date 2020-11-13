@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.1"
+version = "0.2.0"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -10,7 +10,6 @@ authors = [
 crate-type = ["lib"]
 
 [dependencies]
-# rust-gmp = "0.5.0"
 rand = "0.6"
 serde = "1.0"
 serde_derive = "1.0"
@@ -18,13 +17,14 @@ paillier = { path = "/Users/tomos/cb_repos/rust-paillier"}
 zk-paillier = { path = "/Users/tomos/cb_repos/zk-paillier"}
 centipede = { path = "/Users/tomos/cb_repos/centipede"}
 multi-party-ecdsa = { path = "/Users/tomos/cb_repos/multi-party-ecdsa" }
+cfg-if = "0.1.10"
 
 # [dependencies.paillier]
 # git = "https://github.com/commerceblocks/rust-paillier"
 # tag = "v0.3.7"
 
 # [dependencies.zk-paillier]
-# git = "https://github.com/KZen-networks/zk-paillier"
+# git = "https://github.com/commerceblocks/zk-paillier"
 # tag = "v0.3.7"
 
 # [dependencies.multi-party-schnorr]
@@ -49,3 +49,4 @@ features = ["ec_secp256k1"]
 [features]
 # default = ["schnorr"]
 # schnorr = ["multi-party-schnorr"]
+include_paillier_proofs = []

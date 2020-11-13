@@ -25,6 +25,7 @@ use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, par
 use paillier::EncryptionKey;
 use rotation::two_party::Rotation;
 use zk_paillier::zkproofs::{NICorrectKeyProof, RangeProofNi};
+use cfg_if::cfg_if;
 use Errors::{self, SignError};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -150,7 +151,7 @@ impl MasterKey1 {
         MasterKey1 {
             public: party_one_public,
             private: party_one_private,
-            chain_code: chain_code,
+            chain_code,
         }
     }
 
@@ -189,12 +190,23 @@ impl MasterKey1 {
         let party_one_private =
             party_one::Party1Private::set_private_key(&ec_key_pair_party1, &paillier_key_pair);
 
-        let range_proof = party_one::PaillierKeyPair::generate_range_proof(
-            &paillier_key_pair,
-            &party_one_private,
-        );
-        let correct_key_proof =
-            party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair);
+        // Generate Paillier proofs
+        #[allow(unused_assignments)]
+        let mut range_proof = RangeProofNi::new_empty();
+        #[allow(unused_assignments)]
+        let mut correct_key_proof = NICorrectKeyProof { sigma_vec: vec!()};
+        cfg_if! {
+            if #[cfg(feature="include_paillier_proofs")]{
+                range_proof = party_one::PaillierKeyPair::generate_range_proof(
+                    &paillier_key_pair,
+                    &party_one_private,
+                );
+
+                correct_key_proof =
+                    party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair);
+            }
+        }
+
         (
             KeyGenParty1Message2 {
                 ecdh_second_message: key_gen_second_message,
@@ -206,6 +218,7 @@ impl MasterKey1 {
             paillier_key_pair,
             party_one_private,
         )
+
     }
 
     pub fn key_gen_third_message(
