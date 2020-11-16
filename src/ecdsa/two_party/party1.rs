@@ -21,6 +21,7 @@ use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::EphK
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::PDLFirstMessage as Party2PDLFirstMsg;
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::PDLSecondMessage as Party2PDLSecondMsg;
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
+use cfg_if::cfg_if;
 
 use paillier::EncryptionKey;
 use rotation::two_party::Rotation;
@@ -32,8 +33,8 @@ pub struct KeyGenParty1Message2 {
     pub ecdh_second_message: party_one::KeyGenSecondMsg,
     pub ek: EncryptionKey,
     pub c_key: BigInt,
-    pub correct_key_proof: NICorrectKeyProof,
-    pub range_proof: RangeProofNi,
+    pub correct_key_proof: Option<NICorrectKeyProof>,
+    pub range_proof: Option<RangeProofNi>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -150,7 +151,7 @@ impl MasterKey1 {
         MasterKey1 {
             public: party_one_public,
             private: party_one_private,
-            chain_code: chain_code,
+            chain_code,
         }
     }
 
@@ -189,12 +190,24 @@ impl MasterKey1 {
         let party_one_private =
             party_one::Party1Private::set_private_key(&ec_key_pair_party1, &paillier_key_pair);
 
-        let range_proof = party_one::PaillierKeyPair::generate_range_proof(
-            &paillier_key_pair,
-            &party_one_private,
-        );
-        let correct_key_proof =
-            party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair);
+        #[allow(unused_assignments)]
+        let mut range_proof: Option<RangeProofNi> = None;
+        #[allow(unused_assignments)]
+        let mut correct_key_proof: Option<NICorrectKeyProof> = None;
+        cfg_if! {
+            if #[cfg(feature="zkproofs")]{
+                range_proof = Some(party_one::PaillierKeyPair::generate_range_proof(
+                    &paillier_key_pair,
+                    &party_one_private,
+                ));
+
+                correct_key_proof =
+                    Some(party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair));
+            } else {
+                println!("here instaad");
+            }
+        }
+
         (
             KeyGenParty1Message2 {
                 ecdh_second_message: key_gen_second_message,
