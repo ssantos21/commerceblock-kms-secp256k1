@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.3"
+version = "0.1.2"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -16,25 +16,25 @@ serde_derive = "1.0"
 cfg-if = "0.1.10"
 
 [dependencies.paillier]
-git = "https://github.com/commerceblocks/rust-paillier"
-tag = "v0.3.6"
+git = "https://github.com/commerceblock/rust-paillier"
+branch = "client_version"
 
 [dependencies.zk-paillier]
-git = "https://github.com/commerceblocks/zk-paillier"
-tag = "v0.3.8"
+git = "https://github.com/commerceblock/zk-paillier"
+branch = "client_version"
 
 [dependencies.curv]
 git = "https://github.com/commerceblock/curv"
-tag = "v0.2.8"
 features = ["ec_secp256k1"]
+branch = "client_version"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
-tag = "v0.2.8"
+branch = "client_version"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"
-tag = "v0.2.8"
+branch = "client_version"
 
 [dependencies.multi-party-schnorr]
 git = "https://github.com/commerceblock/multi-party-schnorr"
