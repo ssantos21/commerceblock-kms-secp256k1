@@ -203,8 +203,6 @@ impl MasterKey1 {
 
                 correct_key_proof =
                     Some(party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair));
-            } else {
-                println!("here instaad");
             }
         }
 
