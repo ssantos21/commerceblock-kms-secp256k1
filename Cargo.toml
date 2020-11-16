@@ -42,5 +42,6 @@ tag = "v0.3.4"
 optional = true
 
 [features]
+default = []
 schnorr = ["multi-party-schnorr"]
-include_paillier_proofs = []
+zkproofs = []

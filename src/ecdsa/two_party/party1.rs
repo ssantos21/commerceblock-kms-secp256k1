@@ -33,8 +33,8 @@ pub struct KeyGenParty1Message2 {
     pub ecdh_second_message: party_one::KeyGenSecondMsg,
     pub ek: EncryptionKey,
     pub c_key: BigInt,
-    pub correct_key_proof: NICorrectKeyProof,
-    pub range_proof: RangeProofNi,
+    pub correct_key_proof: Option<NICorrectKeyProof>,
+    pub range_proof: Option<RangeProofNi>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -192,18 +192,18 @@ impl MasterKey1 {
 
         // Generate Paillier proofs
         #[allow(unused_assignments)]
-        let mut range_proof = RangeProofNi::new_empty();
+        let mut range_proof: Option<RangeProofNi> = None;
         #[allow(unused_assignments)]
-        let mut correct_key_proof = NICorrectKeyProof { sigma_vec: vec!()};
+        let mut correct_key_proof: Option<NICorrectKeyProof> = None;
         cfg_if! {
-            if #[cfg(feature="include_paillier_proofs")]{
-                range_proof = party_one::PaillierKeyPair::generate_range_proof(
+            if #[cfg(feature="zkproofs")]{
+                range_proof = Some(party_one::PaillierKeyPair::generate_range_proof(
                     &paillier_key_pair,
                     &party_one_private,
-                );
+                ));
 
                 correct_key_proof =
-                    party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair);
+                    Some(party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair));
             }
         }
 
