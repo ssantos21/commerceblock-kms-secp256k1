@@ -13,7 +13,6 @@ crate-type = ["lib"]
 rand = "0.6"
 serde = "1.0"
 serde_derive = "1.0"
-cfg-if = "0.1.10"
 
 [dependencies.paillier]
 git = "https://github.com/commerceblock/rust-paillier"
@@ -44,4 +43,3 @@ optional = true
 [features]
 default = []
 schnorr = ["multi-party-schnorr"]
-zkproofs = []

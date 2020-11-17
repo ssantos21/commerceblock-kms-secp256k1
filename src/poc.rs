@@ -80,6 +80,7 @@ mod tests {
                 kg_comm_witness,
                 &kg_ec_key_pair_party1,
                 &kg_party_two_first_message.d_log_proof,
+                true
             );
 
         let key_gen_second_message = EcdsaMasterKey2::key_gen_second_message(
