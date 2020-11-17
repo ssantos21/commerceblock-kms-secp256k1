@@ -21,7 +21,6 @@ use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::EphK
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::PDLFirstMessage as Party2PDLFirstMsg;
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_two::PDLSecondMessage as Party2PDLSecondMsg;
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
-use cfg_if::cfg_if;
 
 use paillier::EncryptionKey;
 use rotation::two_party::Rotation;
@@ -175,6 +174,7 @@ impl MasterKey1 {
         comm_witness: party_one::CommWitness,
         ec_key_pair_party1: &party_one::EcKeyPair,
         proof: &DLogProof,
+        generate_zk_proofs: bool
     ) -> (
         KeyGenParty1Message2,
         party_one::PaillierKeyPair,
@@ -190,20 +190,16 @@ impl MasterKey1 {
         let party_one_private =
             party_one::Party1Private::set_private_key(&ec_key_pair_party1, &paillier_key_pair);
 
-        #[allow(unused_assignments)]
         let mut range_proof: Option<RangeProofNi> = None;
-        #[allow(unused_assignments)]
         let mut correct_key_proof: Option<NICorrectKeyProof> = None;
-        cfg_if! {
-            if #[cfg(feature="zkproofs")]{
-                range_proof = Some(party_one::PaillierKeyPair::generate_range_proof(
-                    &paillier_key_pair,
-                    &party_one_private,
-                ));
+        if generate_zk_proofs{
+            range_proof = Some(party_one::PaillierKeyPair::generate_range_proof(
+                &paillier_key_pair,
+                &party_one_private,
+            ));
 
-                correct_key_proof =
-                    Some(party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair));
-            }
+            correct_key_proof =
+                Some(party_one::PaillierKeyPair::generate_ni_proof_correct_key(&paillier_key_pair));
         }
 
         (

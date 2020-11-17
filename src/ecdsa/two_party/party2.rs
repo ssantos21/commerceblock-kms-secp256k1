@@ -184,24 +184,22 @@ impl MasterKey2 {
         };
 
         // Verify Paillier proofs
-        cfg_if! {
-            if #[cfg(feature="zkproofs")]{
-                let range_proof_verify = party_two::PaillierPublic::verify_range_proof(
-                    &party_two_paillier,
-                    &party_one_second_message.range_proof.as_ref().unwrap(),
-                );
-                if range_proof_verify.is_err() {
-                    return Err(());
-                }
-
-                let correct_key_verify = party_one_second_message
-                    .correct_key_proof
-                    .as_ref()
-                    .unwrap()
-                    .verify(&party_two_paillier.ek);
-                if correct_key_verify.is_err() {
-                    return Err(());
-                }
+        if party_one_second_message.range_proof.is_some() {
+            if party_two::PaillierPublic::verify_range_proof(
+                &party_two_paillier,
+                &party_one_second_message.range_proof.as_ref().unwrap(),
+            ).is_err() {
+                return Err(());
+            }
+        }
+        if party_one_second_message.correct_key_proof.is_some() {
+            if party_one_second_message
+                .correct_key_proof
+                .as_ref()
+                .unwrap()
+                .verify(&party_two_paillier.ek
+            ).is_err() {
+                return Err(());
             }
         }
 

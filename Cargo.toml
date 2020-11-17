@@ -14,7 +14,6 @@ rust-gmp = "0.5.0"
 rand = "0.6"
 serde = "1.0"
 serde_derive = "1.0"
-cfg-if = "0.1.10"
 
 [dependencies.paillier]
 git = "https://github.com/KZen-networks/rust-paillier"
@@ -48,4 +47,3 @@ rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://git
 [features]
 default = ["schnorr"]
 schnorr = ["multi-party-schnorr"]
-zkproofs = []
