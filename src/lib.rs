@@ -24,7 +24,6 @@ extern crate multi_party_ecdsa;
 extern crate multi_party_schnorr;
 extern crate paillier;
 extern crate zk_paillier;
-extern crate cfg_if;
 
 pub mod chain_code;
 pub mod ecdsa;
