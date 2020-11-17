@@ -18,7 +18,6 @@ use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_one::PDLS
 
 use super::party1::{KeyGenParty1Message2, RotationParty1Message1};
 use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
-use cfg_if::cfg_if;
 
 use super::hd_key;
 use super::{MasterKey1, MasterKey2, Party2Public};
