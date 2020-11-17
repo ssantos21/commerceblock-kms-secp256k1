@@ -185,7 +185,7 @@ impl MasterKey2 {
 
         // Verify Paillier proofs
         cfg_if! {
-            if #[cfg(feature="include_paillier_proofs")]{
+            if #[cfg(feature="zkproofs")]{
                 let range_proof_verify = party_two::PaillierPublic::verify_range_proof(
                     &party_two_paillier,
                     &party_one_second_message.range_proof.as_ref().unwrap(),
