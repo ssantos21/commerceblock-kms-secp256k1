@@ -258,6 +258,7 @@ impl MasterKey2 {
             &party_one_rotation_first_message.pdl_proof,
             &party_two_paillier,
             &(self.public.p1 * &cf.rotation),
+        );
 
         let correct_key_verify = party_one_rotation_first_message
             .correct_key_proof
