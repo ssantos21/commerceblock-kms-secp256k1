@@ -167,7 +167,7 @@ mod tests {
             party_two_master_key.rotate_first_message(&random2, &rotation_party_one_first_message);
         assert!(result_rotate_party_one_first_message.is_ok());
 
-        let party_two_master_key_rotated = result_rotate_party_one_third_message.unwrap();
+        let party_two_master_key_rotated = result_rotate_party_one_first_message.unwrap();
 
         //test by signing:
         let message = BigInt::from(1234);
