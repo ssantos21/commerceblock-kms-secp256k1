@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
