@@ -16,12 +16,13 @@ serde = "1.0"
 serde_derive = "1.0"
 
 [dependencies.paillier]
-git = "https://github.com/KZen-networks/rust-paillier"
-tag = "v0.3.4"
+git = "https://github.com/commerceblock/rust-paillier"
+tag = "v0.3.6"
 
 [dependencies.zk-paillier]
-git = "https://github.com/KZen-networks/zk-paillier"
-tag = "v0.2.8"
+git = "https://github.com/commerceblock/zk-paillier"
+#tag = "v0.2.8"
+branch = "lockbox"
 
 [dependencies.multi-party-schnorr]
 git = "https://github.com/commerceblock/multi-party-schnorr"
@@ -31,15 +32,17 @@ optional = true
 [dependencies.curv]
 git = "https://github.com/commerceblock/curv"
 features =  ["ec_secp256k1"]
-tag = "v0.2.7"
+tag = "v0.2.3"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
-tag = "v0.3.7"
+#tag = "v0.3.7"
+branch = "lockbox"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"
-tag = "v0.2.7"
+#tag = "v0.2.7"
+branch = "lockbox"
 
 [patch.crates-io]
 rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
