@@ -20,6 +20,7 @@ mod tests {
     use chain_code::two_party::party2;
     use curv::arithmetic::traits::Converter;
     use curv::elliptic::curves::traits::{ECPoint, ECScalar};
+    use curv::arithmetic::big_num::{One, Num};
     use curv::{BigInt, FE, GE};
     use rotation::two_party::party1::Rotation1;
     use rotation::two_party::party2::Rotation2;
@@ -407,6 +408,7 @@ mod tests {
                 kg_comm_witness.clone(),
                 &kg_ec_key_pair_party1,
                 &kg_party_two_first_message.d_log_proof,
+                true
             );
 
         let key_gen_second_message = MasterKey2::key_gen_second_message(
