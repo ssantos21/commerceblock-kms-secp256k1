@@ -22,6 +22,7 @@ use super::{MasterKey1, MasterKey2, Party2Public};
 use curv::elliptic::curves::traits::ECPoint;
 use curv::elliptic::curves::traits::ECScalar;
 use rotation::two_party::Rotation;
+use ZK_PAILLIER_SALT_STRING;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SignMessage {
@@ -185,7 +186,7 @@ impl MasterKey2 {
 
         let correct_key_verify = party_one_second_message
             .correct_key_proof
-            .verify(&party_two_paillier.ek);
+            .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
 
         match pdl_verify {
             Ok(_proof) => match correct_key_verify {
@@ -262,7 +263,7 @@ impl MasterKey2 {
 
         let correct_key_verify = party_one_rotation_first_message
             .correct_key_proof
-            .verify(&party_two_paillier.ek);
+            .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
 
         let master_key = self.rotate(cf, &party_two_paillier);
 

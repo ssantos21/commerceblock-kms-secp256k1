@@ -407,8 +407,7 @@ mod tests {
             MasterKey1::key_gen_second_message(
                 kg_comm_witness.clone(),
                 &kg_ec_key_pair_party1,
-                &kg_party_two_first_message.d_log_proof,
-                true
+                &kg_party_two_first_message.d_log_proof
             );
 
         let key_gen_second_message = MasterKey2::key_gen_second_message(
