@@ -178,8 +178,7 @@ impl MasterKey1 {
     pub fn key_gen_second_message(
         comm_witness: party_one::CommWitness,
         ec_key_pair_party1: &party_one::EcKeyPair,
-        proof: &DLogProof,
-        generate_zk_proofs: bool
+        proof: &DLogProof
     ) -> (
         KeyGenParty1Message2,
         party_one::PaillierKeyPair,

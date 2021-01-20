@@ -186,7 +186,7 @@ impl MasterKey2 {
 
         let correct_key_verify = party_one_second_message
             .correct_key_proof
-            .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
+            .verify(&party_two_paillier.ek);
 
         match pdl_verify {
             Ok(_proof) => match correct_key_verify {
@@ -203,6 +203,7 @@ impl MasterKey2 {
             },
             Err(_pdl_error) => Err(()),
         }
+
     }
 
     pub fn sign_first_message() -> (
@@ -263,7 +264,7 @@ impl MasterKey2 {
 
         let correct_key_verify = party_one_rotation_first_message
             .correct_key_proof
-            .verify(&party_two_paillier.ek, ZK_PAILLIER_SALT_STRING);
+            .verify(&party_two_paillier.ek);
 
         let master_key = self.rotate(cf, &party_two_paillier);
 
