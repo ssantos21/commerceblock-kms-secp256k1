@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.7"
+version = "0.1.8"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -16,8 +16,8 @@ serde = "1.0"
 serde_derive = "1.0"
 
 [dependencies.paillier]
-git = "https://github.com/KZen-networks/rust-paillier"
-tag = "v0.3.4"
+git = "https://github.com/commerceblock/rust-paillier"
+tag = "v0.3.7"
 
 [dependencies.zk-paillier]
 git = "https://github.com/commerceblock/zk-paillier"
