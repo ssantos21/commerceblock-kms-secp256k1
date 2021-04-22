@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -35,7 +35,7 @@ tag = "v0.2.8"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
-tag = "v0.3.8"
+tag = "v0.3.9"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"
