@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.4"
+version = "0.1.6"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -20,8 +20,8 @@ git = "https://github.com/KZen-networks/rust-paillier"
 tag = "v0.3.4"
 
 [dependencies.zk-paillier]
-git = "https://github.com/KZen-networks/zk-paillier"
-tag = "v0.2.8"
+git = "https://github.com/commerceblock/zk-paillier"
+tag = "v0.3.8"
 
 [dependencies.multi-party-schnorr]
 git = "https://github.com/commerceblock/multi-party-schnorr"
@@ -39,7 +39,7 @@ tag = "v0.3.8"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"
-tag = "v0.2.8"
+tag = "v0.2.9"
 
 [patch.crates-io]
 rust-gmp = { version = "0.5.0", features = ["serde_support"], git = "https://github.com/KZen-networks/rust-gmp" }
