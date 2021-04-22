@@ -1,6 +1,6 @@
 [package]
 name = "kms"
-version = "0.1.12"
+version = "0.1.13"
 authors = [
     "Omer <omer@kzencorp.com>",
     "Gary <gary@kzencorp.com>"
@@ -21,7 +21,7 @@ tag = "v0.3.7"
 
 [dependencies.zk-paillier]
 git = "https://github.com/commerceblock/zk-paillier"
-tag = "v0.3.9"
+tag = "v0.3.10"
 
 [dependencies.multi-party-schnorr]
 git = "https://github.com/commerceblock/multi-party-schnorr"
