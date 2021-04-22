@@ -31,7 +31,7 @@ optional = true
 [dependencies.curv]
 git = "https://github.com/commerceblock/curv"
 features =  ["ec_secp256k1"]
-tag = "v0.2.7"
+tag = "v0.2.8"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
