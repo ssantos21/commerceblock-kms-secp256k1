@@ -25,11 +25,11 @@ branch = "client_version"
 [dependencies.curv]
 git = "https://github.com/commerceblock/curv"
 features = ["ec_secp256k1"]
-branch = "client_version_2"
+branch = "client_version"
 
 [dependencies.multi-party-ecdsa]
 git = "https://github.com/commerceblock/multi-party-ecdsa"
-branch = "client_version_2"
+branch = "client_version"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"
