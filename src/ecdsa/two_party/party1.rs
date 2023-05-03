@@ -13,6 +13,7 @@ use curv::cryptographic_primitives::proofs::sigma_dlog::DLogProof;
 use curv::elliptic::curves::traits::ECPoint;
 use curv::elliptic::curves::traits::ECScalar;
 use curv::{BigInt, FE, GE};
+use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_one::BlindedSignature;
 
 use super::hd_key;
 use super::{MasterKey1, MasterKey2, Party1Public};
@@ -259,6 +260,31 @@ impl MasterKey1 {
         } else {
             Err(SignError)
         }
+    }
+
+    pub fn sign_second_message_with_blinding_factor(
+        &self,
+        party_two_sign_message_second_message: &party_two::EphKeyGenSecondMsg,
+        party_two_sign_message_partial_sig_c4: &BigInt,
+        eph_key_gen_first_message_party_two: &EphKeyGenFirstMsg,
+        eph_ec_key_pair_party1: &party_one::EphEcKeyPair,
+    ) -> BlindedSignature  {
+        let verify_party_two_second_message =
+            party_one::EphKeyGenSecondMsg::verify_commitments_and_dlog_proof(
+                &eph_key_gen_first_message_party_two,
+                &party_two_sign_message_second_message,
+            )
+            .is_ok();
+
+        assert!(verify_party_two_second_message);
+
+        let blinded_signature = party_one::Signature::compute_blinded(
+            &self.private, 
+            &party_two_sign_message_partial_sig_c4, 
+            &eph_ec_key_pair_party1
+        );
+
+        blinded_signature
     }
 
     pub fn rotation_first_message(self, cf: &Rotation) -> (RotationParty1Message1, MasterKey1) {

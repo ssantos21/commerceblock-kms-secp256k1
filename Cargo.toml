@@ -34,8 +34,8 @@ features =  ["ec_secp256k1"]
 tag = "v0.2.8"
 
 [dependencies.multi-party-ecdsa]
-git = "https://github.com/commerceblock/multi-party-ecdsa"
-tag = "v0.3.12"
+git = "https://github.com/ssantos21/commerceblock-multi-party-ecdsa.git"
+tag = "v0.3.12-blinded"
 
 [dependencies.centipede]
 git = "https://github.com/commerceblock/centipede"

@@ -18,81 +18,86 @@
 
 #[cfg(test)]
 mod tests {
-    #[cfg(feature = "schnorr")]
-    use schnorr::two_party::party1;
-    #[cfg(feature = "schnorr")]
-    use schnorr::two_party::party2;
+    use std::cmp;
 
-    #[cfg(feature = "schnorr")]
+    use curv::{BigInt, elliptic::curves::traits::ECScalar, FE, arithmetic::traits::Modulo};
+    use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::{party_one, party_two};
+
+
     #[test]
-    fn poc_schnorr_ecdsa() {
-        // generate random secret share:
-        let ss: FE = ECScalar::new_random();
-        // party 2 is a client
-
-        // backup: VE under public key Y (=yG):
-        let segment_size = 8;
-        let y: FE = ECScalar::new_random();
-        let G: GE = ECPoint::generator();
-        let Y = G.clone() * &y;
-        let Q = &G * &ss;
-        // encryption
-        let (segments, encryptions) =
-            Msegmentation::to_encrypted_segments(&ss, &segment_size, 32, &Y, &G);
-        // provable encryption
-        let proof = Proof::prove(&segments, &encryptions, &G, &Y, &segment_size);
-
-        // party two verifier the backup zk proof
-        let result = proof.verify(&encryptions, &G, &Y, &Q, &segment_size);
-        assert!(result.is_ok());
-
-        //full schnorr key gen:
-        let keygen_party1 = party1::KeyGen::first_message();
-        let keygen_party2 = party2::KeyGen::first_message_predefined(ss.clone());
-        let (hash_e1, keygen_party1_second_message) =
-            keygen_party1.second_message(&keygen_party2.first_message);
-        let (hash_e2, keygen_party2_second_message) =
-            keygen_party2.second_message(&keygen_party1.first_message);
-        let _pubkey_view_party1 = keygen_party1
-            .third_message(
-                &keygen_party2.first_message,
-                &keygen_party2_second_message,
-                &hash_e1.e,
+    fn test_two_party_blinded_sign() {
+        // assume party1 and party2 engaged with KeyGen in the past resulting in
+        // party1 owning private share and paillier key-pair
+        // party2 owning private share and paillier encryption of party1 share
+        let (_party_one_private_share_gen, _comm_witness, ec_key_pair_party1) =
+            party_one::KeyGenFirstMsg::create_commitments();
+        let (party_two_private_share_gen, ec_key_pair_party2) = party_two::KeyGenFirstMsg::create();
+    
+        let keypair =
+            party_one::PaillierKeyPair::generate_keypair_and_encrypted_share(&ec_key_pair_party1);
+    
+        // creating the ephemeral private shares:
+    
+        let (eph_party_two_first_message, eph_comm_witness, eph_ec_key_pair_party2) =
+            party_two::EphKeyGenFirstMsg::create_commitments();
+        let (eph_party_one_first_message, eph_ec_key_pair_party1) =
+            party_one::EphKeyGenFirstMsg::create();
+        let eph_party_two_second_message = party_two::EphKeyGenSecondMsg::verify_and_decommit(
+            eph_comm_witness,
+            &eph_party_one_first_message,
+        )
+        .expect("party1 DLog proof failed");
+    
+        let _eph_party_one_second_message =
+            party_one::EphKeyGenSecondMsg::verify_commitments_and_dlog_proof(
+                &eph_party_two_first_message,
+                &eph_party_two_second_message,
             )
-            .expect("bad key proof");
-        let _pubkey_view_party2 = keygen_party2
-            .third_message(
-                &keygen_party1.first_message,
-                &keygen_party1_second_message,
-                &hash_e2.e,
-            )
-            .expect("bad key proof");
-
-        // full ecdsa key gen:
-
-        // key gen
-        let (kg_party_one_first_message, kg_comm_witness, kg_ec_key_pair_party1) =
-            EcdsaMasterKey1::key_gen_first_message();
-        let (kg_party_two_first_message, _kg_ec_key_pair_party2) =
-            EcdsaMasterKey2::key_gen_first_message();
-        let (kg_party_one_second_message, _party_one_paillier_key_pair, _party_one_private) =
-            EcdsaMasterKey1::key_gen_second_message(
-                kg_comm_witness.clone(),
-                &kg_ec_key_pair_party1,
-                &kg_party_two_first_message.d_log_proof,
-            );
-
-        let key_gen_second_message = EcdsaMasterKey2::key_gen_second_message(
-            &kg_party_one_first_message,
-            &kg_party_one_second_message,
+            .expect("failed to verify commitments and DLog proof");
+        let party2_private = party_two::Party2Private::set_private_key(&ec_key_pair_party2);
+        let message = BigInt::from(1234);
+    
+        let blinding_factor: FE = ECScalar::new_random();
+        let inv_blinding_factor = blinding_factor.invert();
+    
+        let partial_sig = party_two::PartialSig::compute_blinded(
+            &keypair.ek,
+            &keypair.encrypted_share,
+            &party2_private,
+            &eph_ec_key_pair_party2,
+            &eph_party_one_first_message.public_share,
+            &message,
+            &blinding_factor.to_big_int(),
         );
-
-        assert!(key_gen_second_message.is_ok());
-
-        // recovery party two:
-        let secret_decrypted = Msegmentation::decrypt(&encryptions, &G, &y, &segment_size);
-
-        // debug test
-        assert_eq!(ss.get_element(), secret_decrypted.unwrap().get_element());
+    
+        let party1_private = party_one::Party1Private::set_private_key(&ec_key_pair_party1, &keypair);
+    
+        let blinded_signature = party_one::Signature::compute_blinded(
+            &party1_private,
+            &partial_sig.c4,
+            &eph_ec_key_pair_party1,
+        );
+    
+        let q = FE::q();
+    
+        let unblinded_signature_s1 = BigInt::mod_mul(&blinded_signature.s, &inv_blinding_factor.to_big_int(), &q);
+    
+        let unblinded_message_s = cmp::min(
+            unblinded_signature_s1.clone(),
+            FE::q() - unblinded_signature_s1,
+        );
+    
+        let signature = party_one::Signature {
+            r: partial_sig.r,
+            s: unblinded_message_s,
+        };
+    
+        let pubkey =
+            party_one::compute_pubkey(&party1_private, &party_two_private_share_gen.public_share);
+        party_one::verify(&signature, &pubkey, &message).expect("Invalid signature");
+    
+        let party_one_pubkey = party_one::compute_pubkey(&party1_private, &ec_key_pair_party2.public_share);
+        party_one::verify(&signature, &party_one_pubkey, &message).expect("Invalid signature");
+    
     }
 }

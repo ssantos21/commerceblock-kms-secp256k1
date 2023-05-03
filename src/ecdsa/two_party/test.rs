@@ -13,17 +13,67 @@
 
 #[cfg(test)]
 mod tests {
+    use std::cmp;
+
     use super::super::{MasterKey1, MasterKey2};
     use centipede::juggling::proof_system::Proof;
     use centipede::juggling::segmentation::Msegmentation;
     use chain_code::two_party::party1;
     use chain_code::two_party::party2;
     use curv::arithmetic::traits::Converter;
+    use curv::arithmetic::traits::Modulo;
     use curv::elliptic::curves::traits::{ECPoint, ECScalar};
     use curv::{BigInt, FE, GE};
+    use multi_party_ecdsa::protocols::two_party_ecdsa::lindell_2017::party_one;
     use rotation::two_party::party1::Rotation1;
     use rotation::two_party::party2::Rotation2;
     use rotation::two_party::Rotation;
+
+    #[test]
+    fn test_blinded() {
+        let (party_one_master_key, party_two_master_key) = test_key_gen();
+
+        let message = BigInt::from(1234);
+        let (sign_party_two_first_message, eph_comm_witness, eph_ec_key_pair_party2) =
+            MasterKey2::sign_first_message();
+        let (sign_party_one_first_message, eph_ec_key_pair_party1) =
+            MasterKey1::sign_first_message();           
+
+        let blinding_factor: FE = ECScalar::new_random();
+        let inv_blinding_factor = blinding_factor.invert();
+
+        let sign_party_two_second_message = party_two_master_key.sign_second_message_with_blinding_factor(
+            &eph_ec_key_pair_party2,
+            eph_comm_witness.clone(),
+            &sign_party_one_first_message,
+            &message,
+            &blinding_factor.to_big_int(),
+        );
+
+        let blinded_signature = party_one_master_key.sign_second_message_with_blinding_factor(
+            &sign_party_two_second_message.second_message,
+            &sign_party_two_second_message.partial_sig.c4,
+            &sign_party_two_first_message,
+            &eph_ec_key_pair_party1,
+        );
+
+        let q = FE::q();
+
+        let unblinded_signature_s1 = BigInt::mod_mul(&blinded_signature.s, &inv_blinding_factor.to_big_int(), &q);
+
+        let unblinded_message_s = cmp::min(
+            unblinded_signature_s1.clone(),
+            FE::q() - unblinded_signature_s1,
+        );
+
+        let signature = party_one::Signature {
+            r: sign_party_two_second_message.partial_sig.r,
+            s: unblinded_message_s,
+        };
+
+        let verify = party_one::verify(&signature, &party_one_master_key.public.q, &message).is_ok();
+        assert!(verify);
+    }
 
     #[test]
     fn test_recovery_from_openssl() {
